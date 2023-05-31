@@ -33,7 +33,7 @@ int main(void)
         return 1;
     }
 
-    if (fgets(&input, MAX_INPUT_LENGTH, stdin) == NULL) // fgets, чтобы предотвратить buffer overflow.
+    if (fgets(input, MAX_INPUT_LENGTH, stdin) == NULL) // fgets, чтобы предотвратить buffer overflow.
     {
         printf("Error reading from stdin.");
         return 2;
@@ -55,7 +55,7 @@ int main(void)
         viruses[i].offset = 0;
     }
 
-    int readResult = readVirusDatabase(virusesFile, &viruses); // ОБРАБОТАТЬ ОШИБКИ
+    int readResult = readVirusDatabase(virusesFile, viruses); // ОБРАБОТАТЬ ОШИБКИ
     if (readResult != 0)
     {
         printf("Error reading the database");
@@ -78,10 +78,10 @@ int main(void)
     if (fflush(stdin) != 0)
     {
         printf("Error flushing stdin");
-        return 12;
+        return 7;
     };
 
-    while (fgets(&input, MAX_INPUT_LENGTH, stdin) != NULL)
+    while (fgets(input, MAX_INPUT_LENGTH, stdin) != NULL)
     {
         input[strcspn(input, "\n")] = '\0';
 
@@ -90,7 +90,7 @@ int main(void)
         if (executable == NULL)
         {
             printf("Error opening the executable.");
-            return 7;
+            return 8;
         }
 
         bool isFileExecutable = false;
@@ -98,7 +98,7 @@ int main(void)
         if (isFileExecutable == false)
         {
             printf("The file is not executable.");
-            return 8;
+            return 9;
         }
 
         int virusCount = 0;
@@ -111,7 +111,7 @@ int main(void)
                 if (printf("File has %s virus!\n", viruses[i].name) < 0)
                 {
                     printf("Error writing to stdout");
-                    return 9;
+                    return 10;
                 }
                 ++virusCount;
             }
@@ -121,26 +121,26 @@ int main(void)
             if (printf("File has no viruses.\n") < 0)
             {
                 printf("Error writing to stdout");
-                return 10;
+                return 11;
             }
         }
 
         if (fclose(executable) != 0)
         {
             printf("Error closing the executable");
-            return 11;
+            return 12;
         };
         if (fflush(stdin) != 0)
         {
             printf("Error flushing stdin");
-            return 12;
+            return 13;
         };
     }
-    if (ferror(stdin)) // ЗДЕСЬ ОСТОРОЖНО! Я не проверяю excecutable на NULL,
+    if (ferror(stdin) != 0) // ЗДЕСЬ ОСТОРОЖНО! Я не проверяю excecutable на NULL,
                        // потому что http://www.c-cpp.ru/content/fgets. Читай возвращаемое значение
     {
         printf("Error reading executables from stdin");
-        return 11;
+        return 14;
     }
 
     return 0;
