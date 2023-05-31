@@ -9,7 +9,7 @@
 #define VIRUS_COUNT 3
 
 // структура, в которой хранится вся информация о вирусе.
-typedef struct _VirusData
+typedef struct
 {
     char name[MAX_INPUT_LENGTH + 1]; // +1 байт для символа завершения строки \0
     unsigned char signature[BYTE_COUNT + 1];
@@ -83,7 +83,7 @@ int main(void)
 
     while (fgets(&input, MAX_INPUT_LENGTH, stdin) != NULL)
     {
-        input[strcspn(input, "\n")] = 0;
+        input[strcspn(input, "\n")] = '\0';
 
         FILE* executable;
         executable = fopen(input, "rb");
@@ -247,15 +247,20 @@ int readVirusDatabase(FILE* file, VirusData* virusArray)
     }
     for (size_t i = 0; i < VIRUS_COUNT; i++)
     {
+        if (fgets(&virusArray[i].name, MAX_INPUT_LENGTH, file) == NULL)
+        {
+            return 3;
+        }
+        virusArray[i].name[strcspn(virusArray[i].name, "\n")] = '\0';
         int writtenCount = fscanf(
-            file, "%s %x %hhx %hhx %hhx %hhx %hhx %hhx %hhx %hhx",
-            &virusArray[i].name, &virusArray[i].offset, &virusArray[i].signature[0], &virusArray[i].signature[1],
+            file, "%x %hhx %hhx %hhx %hhx %hhx %hhx %hhx %hhx\n",
+            &virusArray[i].offset, &virusArray[i].signature[0], &virusArray[i].signature[1],
             &virusArray[i].signature[2], &virusArray[i].signature[3], &virusArray[i].signature[4],
             &virusArray[i].signature[5], &virusArray[i].signature[6], &virusArray[i].signature[7]
         );
-        if (ferror(file) || (writtenCount != BYTE_COUNT + 2))
+        if (ferror(file) || (writtenCount != BYTE_COUNT + 1))
         {
-            return 3;
+            return 4;
         }
     }
     return 0;
