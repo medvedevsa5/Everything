@@ -55,30 +55,45 @@ int main(void)
         viruses[i].offset = 0;
     }
 
-    int readResult = readVirusDatabase(virusesFile, viruses); // ОБРАБОТАТЬ ОШИБКИ
-    if (readResult != 0)
+    int readResult = readVirusDatabase(virusesFile, viruses); // ПРОВЕРИТЬ ОШИБКИ
+    if (readResult == 1)
     {
-        printf("Error reading the database");
+        printf("Error first argument readVirusDatabase() is NULL.");
         return 4;
+    }
+    else if (readResult == 2)
+    {
+        printf("Error second argument readVirusDatabase() is NULL.");
+        return 5;
+    }
+    else if (readResult == 3)
+    {
+        printf("Error reading virus name.");
+        return 6;
+    }
+    else if (readResult == 4)
+    {
+        printf("Error reading virus properities.");
+        return 7;
     }
 
     // закрытие файла
     if (fclose(virusesFile) != 0)
     {
         printf("Error closing viruses database");
-        return 5;
+        return 8;
     };
 
     if (printf("Enter the paths to the executable files one by one. Stop by entering Ctrl+Z.\n") < 0)
     {
         printf("Error writing to stdout");
-        return 6;
+        return 9;
     }
 
     if (fflush(stdin) != 0)
     {
         printf("Error flushing stdin");
-        return 7;
+        return 10;
     };
 
     while (fgets(input, MAX_INPUT_LENGTH, stdin) != NULL)
@@ -90,28 +105,83 @@ int main(void)
         if (executable == NULL)
         {
             printf("Error opening the executable.");
-            return 8;
+            return 11;
         }
 
         bool isFileExecutable = false;
-        int isExecutableResult = isExecutable(executable, &isFileExecutable); // ОБРАБОТАТЬ ОШИБКИ
+        int isExecutableResult = isExecutable(executable, &isFileExecutable); // ПРОВЕРИТЬ ОШИБКИ
+        if (isExecutableResult == 1)
+        {
+            printf("Error first argument isExecutable() is NULL.");
+            return 12;
+        }
+        if (isExecutableResult == 2)
+        {
+            printf("Error second argument isExecutable() is NULL.");
+            return 13;
+        }
+        if (isExecutableResult == 3)
+        {
+            printf("Error getting file pointer position in isExecutable().");
+            return 14;
+        }
+        if (isExecutableResult == 4)
+        {
+            printf("Error reading first two bytes in isExecutable().");
+            return 15;
+        }
+        if (isExecutableResult == 5)
+        {
+            printf("Error returning file pointer to the previous position in isExecutable().");
+            return 16;
+        }
         if (isFileExecutable == false)
         {
             printf("The file is not executable.");
-            return 9;
+            return 17;
         }
 
         int virusCount = 0;
         for (size_t i = 0; i < VIRUS_COUNT; i++)
         {
             bool virused = false;
-            int hasVirusResult = hasVirus(executable, viruses[i].offset, &viruses[i].signature, &virused); // ОБРАБОТАТЬ ОШИБКИ
+            int hasVirusResult = hasVirus(executable, viruses[i].offset, &viruses[i].signature, &virused); // ПРОВЕРИТЬ ОШИБКИ
+            if (hasVirusResult == 1)
+            {
+                printf("Error first argument hasVirus() is NULL.");
+                return 18;
+            }
+            if (hasVirusResult == 2)
+            {
+                printf("Error second argument hasVirus() is below zero.");
+                return 19;
+            }
+            if (hasVirusResult == 3)
+            {
+                printf("Error third argument hasVirus() is NULL.");
+                return 20;
+            }
+            if (hasVirusResult == 4)
+            {
+                printf("Error fourth argument hasVirus() is NULL.");
+                return 21;
+            }
+            if (hasVirusResult == 5)
+            {
+                printf("Error seeking pointer to offset in hasVirus().");
+                return 22;
+            }
+            if (hasVirusResult == 6)
+            {
+                printf("Error reading bytes from file in hasVirus().");
+                return 23;
+            }
             if (virused == true)
             {
                 if (printf("File has %s virus!\n", viruses[i].name) < 0)
                 {
                     printf("Error writing to stdout");
-                    return 10;
+                    return 24;
                 }
                 ++virusCount;
             }
@@ -121,26 +191,26 @@ int main(void)
             if (printf("File has no viruses.\n") < 0)
             {
                 printf("Error writing to stdout");
-                return 11;
+                return 25;
             }
         }
 
         if (fclose(executable) != 0)
         {
             printf("Error closing the executable");
-            return 12;
+            return 26;
         };
         if (fflush(stdin) != 0)
         {
             printf("Error flushing stdin");
-            return 13;
+            return 27;
         };
     }
     if (ferror(stdin) != 0) // ЗДЕСЬ ОСТОРОЖНО! Я не проверяю excecutable на NULL,
                        // потому что http://www.c-cpp.ru/content/fgets. Читай возвращаемое значение
     {
         printf("Error reading executables from stdin");
-        return 14;
+        return 28;
     }
 
     return 0;
