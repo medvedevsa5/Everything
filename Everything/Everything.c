@@ -153,7 +153,7 @@ int main(void)
             int hasVirusResult = hasVirus(executable, viruses[i].offset, &viruses[i].signature, &virused); // ПРОВЕРИТЬ ОШИБКИ
             if (hasVirusResult == 1)
             {
-                printf("Error first argument hasVirus() is NULL. %d", __LINE__);
+                printf("Error first argument hasVirus() is NULL.");
                 return 19;
             }
             if (hasVirusResult == 2)
