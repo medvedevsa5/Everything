@@ -277,7 +277,7 @@ int isExecutable(FILE* file, bool* result)
     }
 
     int filePosition = ftell(file);
-    if (filePosition == 1L)
+    if (filePosition == -1L)
     {
         return 3;
     }
