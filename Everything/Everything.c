@@ -82,7 +82,7 @@ int main(void)
     {
         printf("Error closing viruses database");
         return 8;
-    };
+    }
 
     if (printf("Enter the paths to the executable files one by one. Stop by entering Ctrl+Z.\n") < 0)
     {
@@ -94,7 +94,7 @@ int main(void)
     {
         printf("Error flushing stdin");
         return 10;
-    };
+    }
 
     while (fgets(input, MAX_INPUT_LENGTH, stdin) != NULL)
     {
@@ -204,12 +204,12 @@ int main(void)
         {
             printf("Error closing the executable");
             return 27;
-        };
+        }
         if (fflush(stdin) != 0)
         {
             printf("Error flushing stdin");
             return 28;
-        };
+        }
     }
     if (ferror(stdin) != 0) // ЗДЕСЬ ОСТОРОЖНО! Я не проверяю excecutable на NULL,
                        // потому что http://www.c-cpp.ru/content/fgets. Читай возвращаемое значение
@@ -285,7 +285,7 @@ int isExecutable(FILE* file, bool* result)
     if (fseek(file, 0, SEEK_SET) != 0)
     {
         return 4;
-    };
+    }
 
     unsigned char buffer[3];
     buffer[2] = '\0';
@@ -298,7 +298,7 @@ int isExecutable(FILE* file, bool* result)
     if (fseek(file, filePosition, SEEK_SET) != 0)
     {
         return 6;
-    };
+    }
 
     bool isEqual = (strcmp(buffer, "MZ") == 0);
 
