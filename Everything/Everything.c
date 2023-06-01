@@ -127,18 +127,23 @@ int main(void)
         }
         if (isExecutableResult == 4)
         {
-            printf("Error reading first two bytes in isExecutable().");
+            printf("Error moving pointer to beginning of file in isExecutable().");
             return 15;
         }
         if (isExecutableResult == 5)
         {
-            printf("Error returning file pointer to the previous position in isExecutable().");
+            printf("Error reading first two bytes in isExecutable().");
             return 16;
+        }
+        if (isExecutableResult == 6)
+        {
+            printf("Error returning file pointer to the previous position in isExecutable().");
+            return 17;
         }
         if (isFileExecutable == false)
         {
             printf("The file is not executable.");
-            return 17;
+            return 18;
         }
 
         int virusCount = 0;
@@ -148,40 +153,40 @@ int main(void)
             int hasVirusResult = hasVirus(executable, viruses[i].offset, &viruses[i].signature, &virused); // ПРОВЕРИТЬ ОШИБКИ
             if (hasVirusResult == 1)
             {
-                printf("Error first argument hasVirus() is NULL.");
-                return 18;
+                printf("Error first argument hasVirus() is NULL. %d", __LINE__);
+                return 19;
             }
             if (hasVirusResult == 2)
             {
                 printf("Error second argument hasVirus() is below zero.");
-                return 19;
+                return 20;
             }
             if (hasVirusResult == 3)
             {
                 printf("Error third argument hasVirus() is NULL.");
-                return 20;
+                return 21;
             }
             if (hasVirusResult == 4)
             {
                 printf("Error fourth argument hasVirus() is NULL.");
-                return 21;
+                return 22;
             }
             if (hasVirusResult == 5)
             {
                 printf("Error seeking pointer to offset in hasVirus().");
-                return 22;
+                return 23;
             }
             if (hasVirusResult == 6)
             {
                 printf("Error reading bytes from file in hasVirus().");
-                return 23;
+                return 24;
             }
             if (virused == true)
             {
                 if (printf("File has %s virus!\n", viruses[i].name) < 0)
                 {
                     printf("Error writing to stdout");
-                    return 24;
+                    return 25;
                 }
                 ++virusCount;
             }
@@ -191,26 +196,26 @@ int main(void)
             if (printf("File has no viruses.\n") < 0)
             {
                 printf("Error writing to stdout");
-                return 25;
+                return 26;
             }
         }
 
         if (fclose(executable) != 0)
         {
             printf("Error closing the executable");
-            return 26;
+            return 27;
         };
         if (fflush(stdin) != 0)
         {
             printf("Error flushing stdin");
-            return 27;
+            return 28;
         };
     }
     if (ferror(stdin) != 0) // ЗДЕСЬ ОСТОРОЖНО! Я не проверяю excecutable на NULL,
                        // потому что http://www.c-cpp.ru/content/fgets. Читай возвращаемое значение
     {
         printf("Error reading executables from stdin");
-        return 28;
+        return 29;
     }
 
     return 0;
@@ -277,17 +282,22 @@ int isExecutable(FILE* file, bool* result)
         return 3;
     }
 
+    if (fseek(file, 0, SEEK_SET) != 0)
+    {
+        return 4;
+    };
+
     unsigned char buffer[3];
     buffer[2] = '\0';
 
     if (fread(&buffer, 1, 2, file) != 2)
     {
-        return 4;
+        return 5;
     }
 
     if (fseek(file, filePosition, SEEK_SET) != 0)
     {
-        return 5;
+        return 6;
     };
 
     bool isEqual = (strcmp(buffer, "MZ") == 0);
